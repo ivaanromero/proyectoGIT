@@ -1,0 +1,17 @@
+name: Prueba runner
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  prueba:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mostrar informacion del equipo
+        run: |
+          hostname
+          whoami
+          Get-Date
