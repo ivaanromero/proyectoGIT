@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  updatereadme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Añadir línea de feature al README
+        if: github.event_name != 'pull_request'
+        env:
+          MSG: ${{ github.event.head_commit.message }}
+        run: |
+          TITULO=$(echo "$MSG" | head -n1)
+          echo "Añadida feature: ${TITULO:-manual} ($(date -u '+%Y-%m-%d %H:%M'))" >> README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "ci: actualizar README con nueva feature"
+          git push
+
+  validate-dev:
+    needs: updatereadme
+    runs-on: self-hosted
+    steps:
+      - name: Comparar DEV_TOKEN con LOCAL_DEV_TOKEN
+        shell: powershell
+        env:
+          DEV_TOKEN: ${{ secrets.DEV_TOKEN }}
+        run: |
+          if ($env:DEV_TOKEN -eq $env:LOCAL_DEV_TOKEN) {
+            Write-Host "Los tokens DEV COINCIDEN"
+          } else {
+            Write-Host "Los tokens DEV NO coinciden"
+            exit 1
+          }

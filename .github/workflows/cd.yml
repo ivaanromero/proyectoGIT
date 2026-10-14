@@ -1,0 +1,45 @@
+name: CD
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bumpversion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Subir versión en el README
+        if: github.event_name != 'pull_request'
+        run: |
+          ACTUAL=$(grep -oP 'AppVersion-\K[0-9]+' README.md | head -n1)
+          NUEVA=$(( ${ACTUAL:-0} + 1 ))
+          sed -i "s/^AppVersion-.*/AppVersion-$NUEVA ($(date -u '+%Y-%m-%d %H:%M'))/" README.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "cd: subir versión a AppVersion-$NUEVA"
+          git push
+
+  validate-prod:
+    needs: bumpversion
+    runs-on: self-hosted
+    steps:
+      - name: Comparar PROD_TOKEN con LOCAL_PROD_TOKEN
+        shell: powershell
+        env:
+          PROD_TOKEN: ${{ secrets.PROD_TOKEN }}
+        run: |
+          if ($env:PROD_TOKEN -eq $env:LOCAL_PROD_TOKEN) {
+            Write-Host "Los tokens PROD COINCIDEN"
+          } else {
+            Write-Host "Los tokens PROD NO coinciden"
+            exit 1
+          }
