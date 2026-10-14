@@ -3,3 +3,4 @@ Añadida feature: Add continuous deployment workflow (2026-10-14 14:34)
 Mi feature de prueba
 Añadida feature: Merge pull request #2 from ivaanromero/feature/actividad2 (2026-10-14 14:45)
 Segunda feature
+Añadida feature: Merge pull request #3 from ivaanromero/feature/actividad3 (2026-10-14 15:02)
