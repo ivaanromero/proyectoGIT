@@ -6,3 +6,4 @@ Añadida feature: Merge pull request #2 from ivaanromero/feature/actividad2 (202
 Segunda feature
 Añadida feature: Merge pull request #3 from ivaanromero/feature/actividad3 (2026-10-14 15:02)Añadida feature: Merge branch 'main' into develop (2026-10-14 15:05)
 Linea para fallo
+Añadida feature: Merge pull request #5 from ivaanromero/feature/actividad4 (2026-10-14 15:15)
